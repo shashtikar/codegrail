@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 
 class DLL{
+    internal int id{ get; set;}
         internal int val {get; set;}
         internal DLL next {get; set;}
         internal DLL prev {get; set;}
 
-        internal DLL _head;
-        internal DLL _tail;
+        internal DLL _head {get; set;}
+        internal DLL _tail{get; set;}
 
         public DLL(){
             _head = null;
@@ -20,7 +21,7 @@ class DLL{
             this.Insert(entry.val);
         }
 
-        internal void Insert(int entry){
+        internal DLL Insert(int entry){
             if(_head == null){
                 _head = new DLL();
                 _head.val = entry;
@@ -35,6 +36,8 @@ class DLL{
                 temp.prev = null;
                 _head = temp;
             }
+
+            return _head;
         }
 
         internal void Delete(DLL node){            
@@ -49,8 +52,6 @@ class DLL{
 
 class LRUCache
 {
-    
-
     DLL _dl;
     Dictionary<int, DLL> _dict;
     int _capacity;
@@ -63,19 +64,22 @@ class LRUCache
     }
 
     int Get(int key){
+        // If doesn't exist in cache, just return -1 
         if(!_dict.ContainsKey(key))
             return -1;
 
+        // If exists, just lookup
         var entry = _dict[key];
 
+        // Since this block was recently used, we mark it as recently used
         _dl.ReinsertEntry(entry);
         return entry.val;
     }
 
     void Put(int key, int val){
-        // When the cache is not at full capacity
+        // When the cache is not at full capacity, simply insert and return
         if(_dict.Keys.Count < _capacity){
-
+            _dl.Insert(val);
         } else {
             // If the cache is full, we need to evict LRU and then put the incoming 
             Evict();
@@ -84,6 +88,8 @@ class LRUCache
     }
 
     void Evict(){
+        var element = _dl._tail;
 
-    }.    
+        _dl.Delete(_dl._tail);
+    }    
 }
